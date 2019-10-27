@@ -15,7 +15,7 @@ from google.cloud.speech import types
 import os
 import io
 
-TOKEN = 'YOUR_TOKEN'
+TOKEN = '967137698:AAFnPBS4z-KsdKoTY0psSnKzkWoDIqBioNg'
 PORT = int(os.environ.get('PORT', '5002'))
 BUCKET_NAME = 'YOUR_BUCKET_NAME'
 ADMIN_CHAT_ID = 123456
@@ -24,7 +24,7 @@ dispatcher = updater.dispatcher
 
 
 def start(bot, update):
-    bot.send_message(chat_id=update.message.chat_id, text="Say stuff, I'll transcribe")
+    bot.send_message(chat_id=update.message.chat_id, text="Olá Amigo! Pode gravar o que quiser, eu irei transcrever!")
 
 
 @run_async
@@ -39,6 +39,8 @@ def voice_to_text(bot, update):
     speech_client = speech.SpeechClient()
 
     to_gs = length > 58
+
+
 
     if to_gs:
         storage_client = storage.Client()
@@ -55,7 +57,8 @@ def voice_to_text(bot, update):
     config = types.RecognitionConfig(
         encoding=enums.RecognitionConfig.AudioEncoding.OGG_OPUS,
         sample_rate_hertz=tag.samplerate,
-        language_code='ru-RU')
+        language_code='pt-BR'
+        )
 
     bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
     response = speech_client.long_running_recognize(config, audio).result(timeout=500) \
