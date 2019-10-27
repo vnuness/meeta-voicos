@@ -19,7 +19,7 @@ TOKEN = '967137698:AAFnPBS4z-KsdKoTY0psSnKzkWoDIqBioNg'
 PORT = int(os.environ.get('PORT', '5002'))
 BUCKET_NAME = 'YOUR_BUCKET_NAME'
 ADMIN_CHAT_ID = 123456
-updater = Updater(TOKEN, use_context=True)
+updater = Updater(TOKEN)
 dispatcher = updater.dispatcher
 
 
