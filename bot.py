@@ -43,6 +43,7 @@ def voice_to_text(bot, update):
 
     #tag = TinyTag.get(update.message.document.get_file()['file_path'])
     #length = tag.duration
+    print('baixou')
 
     speech_client = speech.SpeechClient()
 
