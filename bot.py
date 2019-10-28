@@ -14,6 +14,7 @@ from google.cloud.speech import enums
 from google.cloud.speech import types
 import os
 import io
+import wget
 
 TOKEN = '967137698:AAFnPBS4z-KsdKoTY0psSnKzkWoDIqBioNg'
 PORT = int(os.environ.get('PORT', '5002'))
@@ -29,30 +30,37 @@ def start(bot, update):
 
 @run_async
 def voice_to_text(bot, update):
+    print('entrou')
     chat_id = update.message.chat.id
-    file_name = str(chat_id) + '_' + str(update.message.from_user.id) + str(update.message.message_id) + '.ogg'
+    #file_name = str(chat_id) + '_' + str(update.message.from_user.id) + str(update.message.message_id) + '.wav'
 
-    update.message.voice.get_file().download(file_name)
-    tag = TinyTag.get(file_name)
-    length = tag.duration
+    #update.message.document.get_file().download(file_name)
+    #update.message.document.get_file()['file_path']
+
+    #file_name = 
+    print(update.message.document.get_file()['file_path'])
+    wget.download(update.message.document.get_file()['file_path'])
+
+    #tag = TinyTag.get(update.message.document.get_file()['file_path'])
+    #length = tag.duration
 
     speech_client = speech.SpeechClient()
 
-    to_gs = length > 58
+    #to_gs = length > 58
 
 
 
-    if to_gs:
-        storage_client = storage.Client()
+    #if to_gs:
+     #   storage_client = storage.Client()
 
-        bucket = storage_client.get_bucket(BUCKET_NAME)
-        blob = bucket.blob(file_name)
-        blob.upload_from_filename(file_name)
-        audio = types.RecognitionAudio(uri='gs://' + BUCKET_NAME + '/' + file_name)
-    else:
-        with io.open(file_name, 'rb') as audio_file:
-            content = audio_file.read()
-            audio = types.RecognitionAudio(content=content)
+    bucket = storage_client.get_bucket(BUCKET_NAME)
+    blob = bucket.blob(file_name)
+    blob.upload_from_filename(file_name)
+    audio = types.RecognitionAudio(uri='gs://' + BUCKET_NAME + '/' + file_name)
+    #else:
+    #    with io.open(file_name, 'rb') as audio_file:
+    #        content = audio_file.read()
+    #        audio = types.RecognitionAudio(content=content)
 
     config = types.RecognitionConfig(
         encoding=enums.RecognitionConfig.AudioEncoding.OGG_OPUS,
@@ -79,7 +87,7 @@ def ping_me(bot, update, error):
 
 
 start_handler = CommandHandler(str('start'), start)
-oh_handler = MessageHandler(Filters.voice, voice_to_text)
+oh_handler = MessageHandler(Filters.document, voice_to_text)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(oh_handler)
 dispatcher.add_error_handler(ping_me)
