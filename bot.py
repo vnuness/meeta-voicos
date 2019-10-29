@@ -37,6 +37,7 @@ def voice_to_text(bot, update):
     chat_id = update.message.chat.id
     file_name = str(update.message.document.get_file()['file_path']).split('/')
     file_name = file_name[int(len(file_name)) - 1]
+    print(file_name)
     wget.download(update.message.document.get_file()['file_path'])
 
     tag = TinyTag.get(file_name)
