@@ -41,12 +41,12 @@ def voice_to_text(bot, update):
     #file_name = 
     file_name = str(update.message.document.get_file()['file_path']).split('/')
     file_name = file_name[int(len(file_name)) - 1]
-    #print(file_name)
+    print(file_name)
     wget.download(update.message.document.get_file()['file_path'])
-    print("nome do arquivo " + file_name)
+    print(file_name)
 
-    #tag = TinyTag.get(file_name)
-    #print(tag)
+    tag = TinyTag.get(file_name)
+    print(tag)
     #length = tag.duration
 
     speech_client = speech.SpeechClient()
@@ -58,30 +58,30 @@ def voice_to_text(bot, update):
 
     #if to_gs:
     storage_client = storage.Client()
+    print(storage_client)
+
     bucket = storage_client.get_bucket(BUCKET_NAME)
+    print(bucket)
     blob = bucket.blob(file_name)
+    print(blob)
     blob.upload_from_filename(file_name)
+    print(blob.upload_from_filename(file_name))
     audio = types.RecognitionAudio(uri='gs://' + BUCKET_NAME + '/' + file_name)
-    print("uri: " + audio)
+    print(audio)
     #else:
     #    with io.open(file_name, 'rb') as audio_file:
     #        content = audio_file.read()
     #        audio = types.RecognitionAudio(content=content)
 
     config = types.RecognitionConfig(
-        sample_rate_hertz=16000,
+        sample_rate_hertz=tag.samplerate,
         language_code='pt-BR'
         )
 
     bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
-    bot.send_message(chat_id=ADMIN_CHAT_ID, text="Aguarde... Estou realizando a transcrição.")
-    operation = speech_client.long_running_recognize(config, audio)
-
-    print('Aguardando transcricao ...')
-    response = operation.result(timeout=90)
-
+    response = speech_client.long_running_recognize(config, audio).result(timeout=10000) \
         #if to_gs else \
-    #speech_client.recognize(config, audio)
+    speech_client.recognize(config, audio)
     
     message_text = ''
     for result in response.results:
