@@ -18,7 +18,7 @@ import wget
 
 TOKEN = '967137698:AAGkgAJiwgWTb8sYRGe-lH1aCBeswZV077M'
 PORT = int(os.environ.get('PORT', '5002'))
-BUCKET_NAME = 'transctipy_bot'
+BUCKET_NAME = 'quality-storage'
 ADMIN_CHAT_ID = 123456
 updater = Updater(TOKEN)
 dispatcher = updater.dispatcher
