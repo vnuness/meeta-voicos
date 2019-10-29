@@ -44,7 +44,7 @@ def voice_to_text(bot, update):
     wget.download(update.message.document.get_file()['file_path'])
     print(file_name)
 
-    #tag = TinyTag.get(update.message.document.get_file()['file_path'])
+    tag = TinyTag.get(file_name)
     #length = tag.duration
 
     speech_client = speech.SpeechClient()
@@ -61,16 +61,14 @@ def voice_to_text(bot, update):
     blob = bucket.blob(file_name)
     print(blob)
     blob.upload_from_filename(file_name)
-    print(blob.upload_from_filename(file_name))
     audio = types.RecognitionAudio(uri='gs://' + BUCKET_NAME + '/' + file_name)
-    print(audio)
     #else:
     #    with io.open(file_name, 'rb') as audio_file:
     #        content = audio_file.read()
     #        audio = types.RecognitionAudio(content=content)
 
     config = types.RecognitionConfig(
-        encoding=enums.RecognitionConfig.AudioEncoding.wav,
+        #encoding=enums.RecognitionConfig.AudioEncoding.wav,
         sample_rate_hertz=tag.samplerate,
         language_code='pt-BR'
         )
