@@ -46,9 +46,11 @@ def voice_to_text(bot, update):
     print(file_name)
 
     tag = TinyTag.get(file_name)
+    print(tag)
     #length = tag.duration
 
     speech_client = speech.SpeechClient()
+    print(speech_client)
 
     #to_gs = length > 58
 
@@ -56,6 +58,7 @@ def voice_to_text(bot, update):
 
     #if to_gs:
     storage_client = storage.Client()
+    print(storage_client)
 
     bucket = storage_client.get_bucket(BUCKET_NAME)
     print(bucket)
