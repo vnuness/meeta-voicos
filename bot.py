@@ -54,7 +54,7 @@ def voice_to_text(bot, update):
 
 
     #if to_gs:
-     #   storage_client = storage.Client()
+    storage_client = storage.Client()
 
     bucket = storage_client.get_bucket(BUCKET_NAME)
     print(bucket)
