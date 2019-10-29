@@ -40,7 +40,9 @@ def voice_to_text(bot, update):
     #file_name = 
     file_name = str(update.message.document.get_file()['file_path']).split('/')
     file_name = file_name[int(len(file_name)) - 1]
+    print(file_name)
     wget.download(update.message.document.get_file()['file_path'])
+    print(file_name)
 
     #tag = TinyTag.get(update.message.document.get_file()['file_path'])
     #length = tag.duration
@@ -71,8 +73,8 @@ def voice_to_text(bot, update):
 
     bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
     response = speech_client.long_running_recognize(config, audio).result(timeout=500) \
-        if to_gs else \
-        speech_client.recognize(config, audio)
+        #if to_gs else \
+    speech_client.recognize(config, audio)
     
     message_text = ''
     for result in response.results:
