@@ -38,25 +38,20 @@ def voice_to_text(bot, update):
     #update.message.document.get_file()['file_path']
 
     #file_name = 
-    file_name = str(update.message.document.get_file()['file_path'])
-    #file_name = file_name[int(len(file_name)) - 1]
-    #print(file_name)
-    #wget.download(update.message.document.get_file()['file_path'])
-    #print(file_name)
+    file_name = str(update.message.document.get_file()['file_path']).split('/')
+    file_name = file_name[int(len(file_name)) - 1]
+    wget.download(update.message.document.get_file()['file_path'])
 
     tag = TinyTag.get(file_name)
     #length = tag.duration
 
     speech_client = speech.SpeechClient()
 
-    #to_gs = length > 58
-
-
-
     #if to_gs:
     storage_client = storage.Client()
 
     bucket = storage_client.get_bucket(BUCKET_NAME)
+    print(bucket)
     blob = bucket.blob(file_name)
     print(blob)
     blob.upload_from_filename(file_name)
