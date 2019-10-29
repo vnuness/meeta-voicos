@@ -79,9 +79,13 @@ def voice_to_text(bot, update):
         )
 
     bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
-    response = speech_client.long_running_recognize(config, audio).result(timeout=10000) \
+    operation = speech_client.long_running_recognize(config, audio)
+
+    print('Aguardando transcricao ...')
+    response = operation.result(timeout=10000)
+
         #if to_gs else \
-    speech_client.recognize(config, audio)
+    #speech_client.recognize(config, audio)
     
     message_text = ''
     for result in response.results:
