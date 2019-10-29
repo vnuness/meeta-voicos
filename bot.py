@@ -38,12 +38,12 @@ def voice_to_text(bot, update):
     #update.message.document.get_file()['file_path']
 
     #file_name = 
-    print(update.message.document.get_file()['file_path'])
+    file_name = str(update.message.document.get_file()['file_path']).split('/')
+    file_name = file_name[int(len(file_name)) - 1]
     wget.download(update.message.document.get_file()['file_path'])
 
     #tag = TinyTag.get(update.message.document.get_file()['file_path'])
     #length = tag.duration
-    print('baixou')
 
     speech_client = speech.SpeechClient()
 
