@@ -12,6 +12,7 @@ from google.cloud import speech
 from google.cloud import storage
 from google.cloud.speech import enums
 from google.cloud.speech import types
+from google.api_core import retry
 import os
 import io
 import wget
@@ -29,24 +30,27 @@ def start(bot, update):
     bot.send_message(chat_id=update.message.chat_id, text="Olá Amigo! Pode gravar o que quiser, eu irei transcrever!")
 
 
+@retry.Retry(
+    deadline=600)
 @run_async
 def voice_to_text(bot, update):
-    print('entrou')
+    print('entrou na função')
+    print(update)
     chat_id = update.message.chat.id
+    print(update.message.document.get_file()['file_path'])
 
-    #file_name = 
     file_name = str(update.message.document.get_file()['file_path']).split('/')
     file_name = file_name[int(len(file_name)) - 1]
-    print(file_name)
+    #print(file_name)
     wget.download(update.message.document.get_file()['file_path'])
-    print(file_name)
+    #print(file_name)
 
     tag = TinyTag.get(file_name)
     print(tag)
     #length = tag.duration
 
     speech_client = speech.SpeechClient()
-    print(speech_client)
+    #print(speech_client)
 
     #to_gs = length > 58
 
@@ -54,16 +58,17 @@ def voice_to_text(bot, update):
 
     #if to_gs:
     storage_client = storage.Client()
-    print(storage_client)
+    #print(storage_client)
 
     bucket = storage_client.get_bucket(BUCKET_NAME)
-    print(bucket)
+    #print(bucket)
     blob = bucket.blob(file_name)
-    print(blob)
+    #print(blob)
     blob.upload_from_filename(file_name)
     print(blob.upload_from_filename(file_name))
     audio = types.RecognitionAudio(uri='gs://' + BUCKET_NAME + '/' + file_name)
-    print(audio)
+    #print(audio)
+    print(tag.samplerate)
     #else:
     #    with io.open(file_name, 'rb') as audio_file:
     #        content = audio_file.read()
@@ -75,12 +80,16 @@ def voice_to_text(bot, update):
         )
 
     bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
-    response = speech_client.long_running_recognize(config, audio).result(timeout=500) \
+    operation = speech_client.long_running_recognize(config, audio)
+    update.message.reply_text("Aguarde... Estou transcrevendo o áudio.")
+    #bot.send_message(chat_id=ADMIN_CHAT_ID, text="Aguarde... Estou transcrevendo o áudio.")
+    response = operation.result(timeout=1000000)
         #if to_gs else \
-    speech_client.recognize(config, audio)
+    #speech_client.recognize(config, audio)
     
     message_text = ''
     for result in response.results:
+        print(result)
         message_text += result.alternatives[0].transcript + '\n'
 
     update.message.reply_text(message_text)
@@ -93,7 +102,7 @@ def ping_me(bot, update, error):
 
 
 start_handler = CommandHandler(str('start'), start)
-oh_handler = MessageHandler(None, voice_to_text)
+oh_handler = MessageHandler(Filters.document, voice_to_text)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(oh_handler)
 dispatcher.add_error_handler(ping_me)
