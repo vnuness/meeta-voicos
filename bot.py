@@ -22,6 +22,7 @@ BUCKET_NAME = 'transctipy_bot'
 ADMIN_CHAT_ID = 123456
 updater = Updater(TOKEN)
 dispatcher = updater.dispatcher
+print(TOKEN)
 
 
 def start(bot, update):
@@ -44,7 +45,7 @@ def voice_to_text(bot, update):
     wget.download(update.message.document.get_file()['file_path'])
     print(file_name)
 
-    #tag = TinyTag.get(update.message.document.get_file()['file_path'])
+    tag = TinyTag.get(update.message.document.get_file()['file_path'])
     #length = tag.duration
 
     speech_client = speech.SpeechClient()
