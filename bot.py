@@ -13,17 +13,17 @@ from google.cloud import storage
 from google.cloud.speech import enums
 from google.cloud.speech import types
 from google.api_core import retry
+from dotenv import load_dotenv
 import os
 import io
 import wget
+load_dotenv()
 
-TOKEN = '967137698:AAEcIMreYrUMrhB3B3px24O4nCOCjYRY2Xc'
 PORT = int(os.environ.get('PORT', '5002'))
-BUCKET_NAME = 'transctipy_bot'
-ADMIN_CHAT_ID = 123456
-updater = Updater(TOKEN)
+BUCKET_NAME = os.getenv("BUCKET_NAME")
+ADMIN_CHAT_ID = int(os.getenv("ADMIN_CHAT_ID"))
+updater = Updater(os.getenv("TOKEN"))
 dispatcher = updater.dispatcher
-print(TOKEN)
 
 
 def start(bot, update):
@@ -34,40 +34,25 @@ def start(bot, update):
     deadline=600)
 @run_async
 def voice_to_text(bot, update):
-    print('entrou na função')
-    print(update)
     chat_id = update.message.chat.id
-    print(update.message.document.get_file()['file_path'])
-
     file_name = str(update.message.document.get_file()['file_path']).split('/')
     file_name = file_name[int(len(file_name)) - 1]
-    #print(file_name)
     wget.download(update.message.document.get_file()['file_path'])
-    #print(file_name)
 
     tag = TinyTag.get(file_name)
-    print(tag)
-    #length = tag.duration
 
     speech_client = speech.SpeechClient()
-    #print(speech_client)
 
-    #to_gs = length > 58
-
-
-
-    #if to_gs:
     storage_client = storage.Client()
-    #print(storage_client)
 
     bucket = storage_client.get_bucket(BUCKET_NAME)
-    #print(bucket)
+
     blob = bucket.blob(file_name)
-    #print(blob)
+    
     blob.upload_from_filename(file_name)
     print(blob.upload_from_filename(file_name))
     audio = types.RecognitionAudio(uri='gs://' + BUCKET_NAME + '/' + file_name)
-    #print(audio)
+    
     print(tag.samplerate)
     #else:
     #    with io.open(file_name, 'rb') as audio_file:
@@ -75,6 +60,7 @@ def voice_to_text(bot, update):
     #        audio = types.RecognitionAudio(content=content)
 
     config = types.RecognitionConfig(
+        encoding=enums.RecognitionConfig.AudioEncoding.OGG_OPUS,
         sample_rate_hertz=tag.samplerate,
         language_code='pt-BR'
         )
@@ -82,10 +68,8 @@ def voice_to_text(bot, update):
     bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
     operation = speech_client.long_running_recognize(config, audio)
     update.message.reply_text("Aguarde... Estou transcrevendo o áudio.")
-    #bot.send_message(chat_id=ADMIN_CHAT_ID, text="Aguarde... Estou transcrevendo o áudio.")
+    
     response = operation.result(timeout=1000000)
-        #if to_gs else \
-    #speech_client.recognize(config, audio)
     
     message_text = ''
     for result in response.results:
