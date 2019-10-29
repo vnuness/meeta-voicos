@@ -16,7 +16,7 @@ import os
 import io
 import wget
 
-TOKEN = '967137698:AAGkgAJiwgWTb8sYRGe-lH1aCBeswZV077M'
+TOKEN = '967137698:AAEcIMreYrUMrhB3B3px24O4nCOCjYRY2Xc'
 PORT = int(os.environ.get('PORT', '5002'))
 BUCKET_NAME = 'transctipy_bot'
 ADMIN_CHAT_ID = 123456
@@ -33,10 +33,6 @@ def start(bot, update):
 def voice_to_text(bot, update):
     print('entrou')
     chat_id = update.message.chat.id
-    #file_name = str(chat_id) + '_' + str(update.message.from_user.id) + str(update.message.message_id) + '.wav'
-
-    #update.message.document.get_file().download(file_name)
-    #update.message.document.get_file()['file_path']
 
     #file_name = 
     file_name = str(update.message.document.get_file()['file_path']).split('/')
