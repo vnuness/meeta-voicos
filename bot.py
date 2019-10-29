@@ -74,7 +74,7 @@ def voice_to_text(bot, update):
     #        audio = types.RecognitionAudio(content=content)
 
     config = types.RecognitionConfig(
-        sample_rate_hertz=tag.samplerate,
+        sample_rate_hertz=16000,
         language_code='pt-BR'
         )
 
