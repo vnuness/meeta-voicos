@@ -57,16 +57,20 @@ def voice_to_text(bot, update):
      #   storage_client = storage.Client()
 
     bucket = storage_client.get_bucket(BUCKET_NAME)
+    print(bucket)
     blob = bucket.blob(file_name)
+    print(blob)
     blob.upload_from_filename(file_name)
+    print(blob.upload_from_filename(file_name))
     audio = types.RecognitionAudio(uri='gs://' + BUCKET_NAME + '/' + file_name)
+    print(audio)
     #else:
     #    with io.open(file_name, 'rb') as audio_file:
     #        content = audio_file.read()
     #        audio = types.RecognitionAudio(content=content)
 
     config = types.RecognitionConfig(
-        encoding=enums.RecognitionConfig.AudioEncoding.OGG_OPUS,
+        encoding=enums.RecognitionConfig.AudioEncoding.wav,
         sample_rate_hertz=tag.samplerate,
         language_code='pt-BR'
         )
