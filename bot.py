@@ -94,7 +94,7 @@ def ping_me(bot, update, error):
 
 
 start_handler = CommandHandler(str('start'), start)
-oh_handler = MessageHandler(Filters.document, voice_to_text)
+oh_handler = MessageHandler(None, voice_to_text)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(oh_handler)
 dispatcher.add_error_handler(ping_me)
