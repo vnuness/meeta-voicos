@@ -70,7 +70,6 @@ def voice_to_text(bot, update):
     #        audio = types.RecognitionAudio(content=content)
 
     config = types.RecognitionConfig(
-        encoding=enums.RecognitionConfig.AudioEncoding.wav,
         sample_rate_hertz=tag.samplerate,
         language_code='pt-BR'
         )
