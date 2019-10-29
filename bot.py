@@ -16,7 +16,7 @@ import os
 import io
 import wget
 
-TOKEN = '967137698:AAFnPBS4z-KsdKoTY0psSnKzkWoDIqBioNg'
+TOKEN = '967137698:AAGkgAJiwgWTb8sYRGe-lH1aCBeswZV077M'
 PORT = int(os.environ.get('PORT', '5002'))
 BUCKET_NAME = 'transctipy_bot'
 ADMIN_CHAT_ID = 123456
