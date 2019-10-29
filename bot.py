@@ -30,16 +30,23 @@ def start(bot, update):
     bot.send_message(chat_id=update.message.chat_id, text="Olá Amigo! Pode gravar o que quiser, eu irei transcrever!")
 
 
-@retry.Retry(
-    deadline=600)
+@retry.Retry(deadline=600)
 @run_async
 def voice_to_text(bot, update):
     chat_id = update.message.chat.id
-    file_name = str(update.message.document.get_file()['file_path']).split('/')
-    file_name = file_name[int(len(file_name)) - 1]
+    initial_file = str(update.message.document.get_file()['file_path']).split('/')
+    initial_file = initial_file[int(len(initial_file)) - 1]
     wget.download(update.message.document.get_file()['file_path'])
 
-    tag = TinyTag.get(file_name)
+    new_file = str(chat_id) + "_" + str(update.message.from_user.id) + str(update.message.message_id) + ".wav"
+
+    #os.system(os.getenv("FFMPEG_RUN") + " -y -i " + initial_file + " -map_channel 0.0.0? -ar 8000 " + new_file)
+
+    os.system(os.getenv("FFMPEG_RUN") + " -i " + initial_file + " -ac 1 -ar 8000 " + new_file)
+
+    print(new_file)
+
+    tag = TinyTag.get(new_file)
 
     speech_client = speech.SpeechClient()
 
@@ -47,17 +54,10 @@ def voice_to_text(bot, update):
 
     bucket = storage_client.get_bucket(BUCKET_NAME)
 
-    blob = bucket.blob(file_name)
+    blob = bucket.blob(new_file)
     
-    blob.upload_from_filename(file_name)
-    print(blob.upload_from_filename(file_name))
-    audio = types.RecognitionAudio(uri='gs://' + BUCKET_NAME + '/' + file_name)
-    
-    print(tag.samplerate)
-    #else:
-    #    with io.open(file_name, 'rb') as audio_file:
-    #        content = audio_file.read()
-    #        audio = types.RecognitionAudio(content=content)
+    blob.upload_from_filename(new_file)
+    audio = types.RecognitionAudio(uri='gs://' + BUCKET_NAME + '/' + new_file)
 
     config = types.RecognitionConfig(
         sample_rate_hertz=tag.samplerate,
@@ -76,7 +76,7 @@ def voice_to_text(bot, update):
         message_text += result.alternatives[0].transcript + '\n'
 
     update.message.reply_text(message_text)
-    os.remove(file_name)
+    os.remove(new_file)
 
 
 def ping_me(bot, update, error):
